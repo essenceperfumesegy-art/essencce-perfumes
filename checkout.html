@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECCENCE | Checkout Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@100;300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1a0505; --primary-soft: #2a0a0a; --gold: #d4af37; --gold-light: #f9e29b;
+            --cream: #fdf5e6; --white: #ffffff; --black: #000000;
+        }
+        body {
+            background-color: var(--primary); color: var(--cream);
+            font-family: 'Montserrat', sans-serif;
+        }
+        .serif { font-family: 'Cormorant Garamond', serif; }
+        
+        .btn-gold {
+            background: var(--gold); color: var(--primary);
+            padding: 16px 30px; font-size: 11px; letter-spacing: 3px;
+            text-transform: uppercase; font-weight: 600; transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 1px solid var(--gold); width: 100%; text-align: center; display: inline-block; cursor: pointer;
+        }
+        .btn-gold:hover { background: transparent; color: var(--gold); }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .checkout-input {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 0; color: var(--white); font-size: 12px; outline: none; transition: 0.3s;
+        }
+        .checkout-input:focus { border-bottom-color: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="py-6 px-8 flex justify-between items-center border-b border-white/5">
+        <a href="index.html" class="logo serif text-3xl tracking-[0.4em] text-gold">ECCENCE</a>
+        <a href="index.html" class="text-[9px] uppercase tracking-[0.2em] opacity-60 hover:text-gold transition">Return to Vault</a>
+    </header>
+
+    <!-- Checkout Flow -->
+    <main class="max-w-7xl mx-auto px-8 py-20 flex flex-col lg:flex-row gap-20">
+        
+        <!-- Form Section -->
+        <div class="lg:w-1/2 space-y-12">
+            <div>
+                <p class="text-gold text-[10px] tracking-[0.5em] uppercase mb-4">Secure Gateway</p>
+                <h1 class="serif text-5xl mb-10">Acquisition Details</h1>
+            </div>
+
+            <form class="space-y-10" onsubmit="event.preventDefault(); completeOrder();">
+                <div class="space-y-6">
+                    <h3 class="text-xs uppercase tracking-widest opacity-60">Shipping Protocol</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <input type="text" placeholder="First Name" class="checkout-input" required>
+                        <input type="text" placeholder="Last Name" class="checkout-input" required>
+                    </div>
+                    <input type="text" placeholder="Full Address" class="checkout-input" required>
+                    <div class="grid grid-cols-2 gap-6">
+                        <input type="text" placeholder="City" class="checkout-input" required>
+                        <input type="text" placeholder="Postal Code" class="checkout-input">
+                    </div>
+                    <input type="tel" placeholder="Mobile Contact" class="checkout-input" required>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xs uppercase tracking-widest opacity-60">Payment Gateway</h3>
+                    <div class="glass-panel p-6">
+                        <label class="flex items-center gap-4 cursor-pointer">
+                            <input type="radio" name="payment" class="accent-gold" checked>
+                            <span class="text-sm">Cash on Delivery (COD)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-gold">Confirm Acquisition</button>
+            </form>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="lg:w-1/2">
+            <div class="glass-panel p-10 sticky top-10">
+                <h3 class="serif text-3xl mb-8">Order Summary</h3>
+                <div id="checkout-items" class="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-4"></div>
+                
+                <div class="border-t border-white/10 pt-6 space-y-4">
+                    <div class="flex justify-between text-xs opacity-60">
+                        <span>Subtotal</span>
+                        <span id="summary-subtotal">0 EGP</span>
+                    </div>
+                    <div class="flex justify-between text-xs opacity-60">
+                        <span>Shipping</span>
+                        <span id="summary-shipping">Complimentary</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
+                        <span class="text-[10px] uppercase tracking-[0.4em]">Total</span>
+                        <span id="summary-total" class="serif text-3xl text-gold">0 EGP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[9999] hidden flex-col items-center justify-center p-8 text-center">
+        <i data-lucide="check-circle" class="w-16 h-16 text-gold mb-6"></i>
+        <h2 class="serif text-5xl text-gold mb-4">Acquisition Secured</h2>
+        <p class="text-sm opacity-60 tracking-widest uppercase mb-10 max-w-md">Your order has been transmitted to our Concierge. A confirmation will be sent shortly.</p>
+        <a href="index.html" class="btn-gold" style="width: auto;">Return to Boutique</a>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        function getCart() { return JSON.parse(localStorage.getItem('eccence_cart') || '[]'); }
+        
+        function renderCheckout() {
+            const cart = getCart();
+            const container = document.getElementById('checkout-items');
+            
+            if(cart.length === 0) {
+                container.innerHTML = '<p class="opacity-40 italic text-sm">No items in the vault.</p>';
+                return;
+            }
+            
+            container.innerHTML = cart.map(item => `
+                <div class="flex gap-4 items-center">
+                    <div class="w-16 h-16 bg-white/5 flex items-center justify-center p-2">
+                        <img src="${item.file}" class="max-h-full object-contain" onerror="this.src='https://placehold.co/100/1a0505/d4af37?text=E'">
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="serif text-lg leading-tight">${item.name}</h4>
+                        <p class="text-[9px] uppercase tracking-widest opacity-40">${item.gender}</p>
+                    </div>
+                    <span class="text-gold text-sm">${item.price} EGP</span>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('summary-subtotal').innerText = total + " EGP";
+            document.getElementById('summary-total').innerText = total + " EGP";
+        }
+
+        function completeOrder() {
+            document.getElementById('success-modal').classList.remove('hidden');
+            document.getElementById('success-modal').classList.add('flex');
+            localStorage.removeItem('eccence_cart'); // clear cart
+        }
+
+        renderCheckout();
+    </script>
+</body>
+</html>
